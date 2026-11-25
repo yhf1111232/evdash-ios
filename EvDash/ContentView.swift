@@ -17,7 +17,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack(spacing: 0) {
                 // 状态条
                 statusBar
@@ -42,6 +42,7 @@ struct ContentView: View {
             .navigationTitle("EV 车机")
             .navigationBarTitleDisplayMode(.inline)
         }
+        .navigationViewStyle(.stack)
     }
 
     // MARK: - 状态条
