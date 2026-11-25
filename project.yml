@@ -1,0 +1,49 @@
+name: EvDash
+options:
+  bundleIdPrefix: com.evdash
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+    ENABLE_BITCODE: NO
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGNING_REQUIRED: NO
+    CODE_SIGNING_ALLOWED: NO
+
+targets:
+  EvDash:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: EvDash
+    info:
+      path: EvDash/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.evdash.board
+        PRODUCT_NAME: EvDash
+        INFOPLIST_FILE: EvDash/Info.plist
+        TARGETED_DEVICE_FAMILY: "1,2"
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGN_IDENTITY: ""
+        SWIFT_EMIT_LOC_STRINGS: YES
+
+schemes:
+  EvDash:
+    build:
+      targets:
+        EvDash: all
+    run:
+      config: Debug
+    archive:
+      config: Release

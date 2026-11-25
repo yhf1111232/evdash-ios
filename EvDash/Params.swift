@@ -1,0 +1,723 @@
+//
+//  Params.swift
+//  EvDash
+//
+//  参数表 —— 逆向自 GEKOO 1.0.5 (uni.UNIEF9C31D) 的 utils/parameter_list.js
+//  word 索引为 0-based 数据区偏移；bit0/bit1/bit2 为 list 型参数的分散位
+//
+//  由工具自动生成，请勿手改。
+//
+
+import Foundation
+
+/// 参数类型
+enum ParamType: String {
+    case uint, int, float, bool, list, text
+}
+
+/// 单个参数定义
+struct ParamDef: Identifiable {
+    let id = UUID()
+    let group: Int
+    let name: String
+    let type: ParamType
+    /// 字索引（0-based，对应数据区第 word 个字）
+    let index: Int
+    /// 位区间（uint/int/float/bool）
+    let bitStart: Int?
+    let bitEnd: Int?
+    /// list 型的分散位
+    let bit0: Int?
+    let bit1: Int?
+    let bit2: Int?
+    /// list 型是否连续位（continuebit）
+    let continuous: Bool
+    /// 换算比例：物理值 = 原始值 / scale
+    let scale: Double
+    let unit: String
+    let minValue: Double?
+    let maxValue: Double?
+    /// 最低固件版本要求
+    let minVersion: Int?
+    let options: [String]?
+    let mapping: [Int: Int]?
+    /// bool 型的开/关文案
+    let onText: String?
+    let offText: String?
+    let reversed: Bool
+}
+
+/// 参数分组
+struct ParamGroup {
+    let id: Int
+    let name: String
+    let tip: String
+}
+
+enum Params {
+
+    static let groups: [ParamGroup] = [
+        ParamGroup(id: 0, name: "电流组", tip: "直接影响控制器的动力输出"),
+        ParamGroup(id: 1, name: "电机组", tip: "电机本身以及学习电流和弱磁电流的相关参数"),
+        ParamGroup(id: 2, name: "转把和起步性能", tip: "转把有效区间以及动力响应相关"),
+        ParamGroup(id: 3, name: "功能开关", tip: "常用功能选择是否打开"),
+        ParamGroup(id: 4, name: "P挡相关", tip: "驻车挡的适配"),
+        ParamGroup(id: 5, name: "车型/仪表", tip: "仪表/协议/车型"),
+        ParamGroup(id: 6, name: "三速", tip: "不同挡位的速度和动力"),
+        ParamGroup(id: 7, name: "倒车", tip: "助力推行为倒车设置的一半"),
+        ParamGroup(id: 8, name: "电压相关", tip: "适配电池电压参数"),
+        ParamGroup(id: 9, name: "SOC相关", tip: "部分没有计量模块的车型的SOC由控制器估算"),
+        ParamGroup(id: 10, name: "EBS相关", tip: "动能回收和陡坡缓降相关设置"),
+        ParamGroup(id: 11, name: "高级参数", tip: "一般不需要调整"),
+    ];
+
+    static let all: [ParamDef] = [
+        ParamDef(
+            group: 0, name: "母线电流", type: .uint, index: 0,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "A",
+            minValue: 0, maxValue: 60,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 0, name: "相线电流", type: .uint, index: 1,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "A",
+            minValue: 0, maxValue: 200,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 1, name: "电机方向", type: .bool, index: 2,
+            bitStart: 0, bitEnd: 0,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 1,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: "反向", offText: "正向", reversed: false),
+        ParamDef(
+            group: 1, name: "位置传感器类型", type: .bool, index: 30,
+            bitStart: 0, bitEnd: 0,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 1,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: "60°", offText: "120°", reversed: false),
+        ParamDef(
+            group: 1, name: "霍尔相序", type: .bool, index: 31,
+            bitStart: 0, bitEnd: 0,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 1,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: "反序", offText: "正序", reversed: false),
+        ParamDef(
+            group: 1, name: "相移角度", type: .int, index: 32,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 182.0444444444444, unit: "°",
+            minValue: -180, maxValue: 180,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 1, name: "极对数", type: .uint, index: 34,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 50,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 1, name: "载波频率", type: .uint, index: 48,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 20,
+            minVersion: 20,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 1, name: "学习电流", type: .uint, index: 49,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 1, name: "高速挡弱磁电流", type: .uint, index: 21,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "A",
+            minValue: 0, maxValue: 500,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 2, name: "满转把电压", type: .float, index: 3,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 2450, unit: "V",
+            minValue: 0, maxValue: 5,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 2, name: "空转把电压", type: .float, index: 4,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 2450, unit: "V",
+            minValue: 0, maxValue: 5,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 2, name: "D挡软启时间", type: .float, index: 5,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 273.0666667, unit: "Sec",
+            minValue: 0, maxValue: 20,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 2, name: "骑行模式", type: .list, index: 29,
+            bitStart: nil, bitEnd: nil,
+            bit0: 0, bit1: 14, bit2: -1,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 3,
+            minVersion: nil,
+            options: ["线性", "软启", "运动", "暴力"], mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 3, name: "防盗锁电机", type: .bool, index: 29,
+            bitStart: 1, bitEnd: 1,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 1,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: "关闭", offText: "打开", reversed: true),
+        ParamDef(
+            group: 3, name: "锁电机模式", type: .bool, index: 29,
+            bitStart: 11, bitEnd: 11,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 1,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: "强制", offText: "节能", reversed: false),
+        ParamDef(
+            group: 3, name: "H坡道驻车", type: .bool, index: 29,
+            bitStart: 10, bitEnd: 10,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 1,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: "打开", offText: "关闭", reversed: false),
+        ParamDef(
+            group: 3, name: "驻车信号(GK)", type: .bool, index: 29,
+            bitStart: 12, bitEnd: 12,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 1,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: "低刹", offText: "高刹", reversed: false),
+        ParamDef(
+            group: 3, name: "刹车不断电", type: .bool, index: 29,
+            bitStart: 15, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 1,
+            minVersion: 26,
+            options: nil, mapping: nil,
+            onText: "打开", offText: "关闭", reversed: false),
+        ParamDef(
+            group: 3, name: "边撑有效(ND/AE)", type: .bool, index: 29,
+            bitStart: 7, bitEnd: 7,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 1,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: "打开", offText: "关闭", reversed: false),
+        ParamDef(
+            group: 3, name: "长按巡航切倒挡", type: .bool, index: 29,
+            bitStart: 6, bitEnd: 6,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 1,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: "打开", offText: "关闭", reversed: false),
+        ParamDef(
+            group: 3, name: "预警功能", type: .list, index: 29,
+            bitStart: nil, bitEnd: nil,
+            bit0: 8, bit1: 9, bit2: -1,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 3,
+            minVersion: nil,
+            options: ["无效", "关闭", "打开"], mapping: [0: 0, 1: 1, 3: 2],
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 3, name: "TCS灵敏度", type: .uint, index: 58,
+            bitStart: 0, bitEnd: 7,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 255,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 3, name: "TCS恢复时间", type: .uint, index: 58,
+            bitStart: 8, bitEnd: 12,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 15,
+            minVersion: 26,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 4, name: "信号口选择", type: .list, index: 29,
+            bitStart: nil, bitEnd: nil,
+            bit0: 2, bit1: 3, bit2: 4,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 3,
+            minVersion: nil,
+            options: ["默认", "低刹", "巡航"], mapping: [0: 0, 1: 1, 4: 3],
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 4, name: "触发模式", type: .bool, index: 29,
+            bitStart: 5, bitEnd: 5,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 1,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: "拨动", offText: "点动", reversed: false),
+        ParamDef(
+            group: 4, name: "刹车解P(GK专用)", type: .bool, index: 29,
+            bitStart: 13, bitEnd: 13,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 1,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: "打开", offText: "关闭", reversed: false),
+        ParamDef(
+            group: 5, name: "车型选择", type: .list, index: 20,
+            bitStart: 8, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: true, scale: 1, unit: "",
+            minValue: 0, maxValue: 4,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 5, name: "一线通系数", type: .uint, index: 7,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 500,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 5, name: "霍尔仪表脉冲数", type: .uint, index: 8,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 500,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 6, name: "高速挡最高转速", type: .uint, index: 11,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "rpm",
+            minValue: 0, maxValue: 5000,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 6, name: "高速挡相线电流", type: .uint, index: 14,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "%",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 6, name: "高速挡母线电流", type: .uint, index: 17,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "%",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 6, name: "中速挡最高转速", type: .uint, index: 12,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "rpm",
+            minValue: 0, maxValue: 5000,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 6, name: "中速挡相线电流", type: .uint, index: 15,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "%",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 6, name: "中速挡母线电流", type: .uint, index: 18,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "%",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 6, name: "低速挡最高转速", type: .uint, index: 13,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "rpm",
+            minValue: 0, maxValue: 5000,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 6, name: "低速挡相线电流", type: .uint, index: 16,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "%",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 6, name: "低速挡母线电流", type: .uint, index: 19,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "%",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 6, name: "换挡方式", type: .list, index: 20,
+            bitStart: nil, bitEnd: nil,
+            bit0: 0, bit1: 1, bit2: -1,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 2,
+            minVersion: nil,
+            options: ["拨动", "点动", "加减挡"], mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 6, name: "点动默认挡位", type: .list, index: 20,
+            bitStart: nil, bitEnd: nil,
+            bit0: 4, bit1: 5, bit2: -1,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 3,
+            minVersion: nil,
+            options: ["低速挡", "中速挡", "高速挡"], mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 7, name: "R挡软启时间", type: .float, index: 6,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 273.0666667, unit: "Sec",
+            minValue: 0, maxValue: 20,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 7, name: "倒挡速度", type: .uint, index: 25,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "rpm",
+            minValue: 0, maxValue: 1000,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 7, name: "倒挡扭矩", type: .uint, index: 28,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "N·m",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 8, name: "欠压点", type: .uint, index: 9,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "V",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 8, name: "过压点", type: .uint, index: 10,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "V",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 8, name: "降功率起始电压", type: .uint, index: 27,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "V",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 8, name: "降功率截至电压", type: .uint, index: 26,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "V",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 9, name: "电池串数", type: .uint, index: 46,
+            bitStart: 0, bitEnd: 5,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "S",
+            minValue: 0, maxValue: 63,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 9, name: "电池容量", type: .uint, index: 46,
+            bitStart: 6, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "Ah",
+            minValue: 0, maxValue: 1023,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 9, name: "放电系数", type: .uint, index: 59,
+            bitStart: 0, bitEnd: 7,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 255,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 9, name: "电池类型", type: .list, index: 59,
+            bitStart: nil, bitEnd: nil,
+            bit0: 8, bit1: 9, bit2: -1,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 3,
+            minVersion: nil,
+            options: ["三元锂", "磷酸铁锂", "铅酸电池", "锰酸锂"], mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 10, name: "刹车回馈扭矩", type: .uint, index: 22,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "N·m",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 10, name: "松转把回馈扭矩", type: .uint, index: 45,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "N·m",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 10, name: "反充电电流", type: .uint, index: 23,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "A",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 10, name: "最小回馈转速", type: .uint, index: 24,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "rpm",
+            minValue: 0, maxValue: 3000,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 10, name: "反充电电压上限", type: .uint, index: 57,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "V",
+            minValue: 0, maxValue: 100,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 10, name: "陡坡缓降", type: .text, index: 23,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 100,
+            minVersion: 26,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 11, name: "C_Kp", type: .uint, index: 35,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 11, name: "C_Ki", type: .uint, index: 36,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 11, name: "S_Kp", type: .uint, index: 43,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 11, name: "S_Ki", type: .uint, index: 44,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 11, name: "LF参数", type: .uint, index: 53,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 11, name: "SF参数", type: .uint, index: 54,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 11, name: "利用率", type: .uint, index: 37,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 11, name: "余量", type: .uint, index: 38,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 11, name: "调整系数", type: .uint, index: 39,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 11, name: "反电势", type: .uint, index: 40,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 11, name: "额定转速", type: .uint, index: 41,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 11, name: "参数1", type: .uint, index: 55,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+        ParamDef(
+            group: 11, name: "参数2", type: .uint, index: 56,
+            bitStart: 0, bitEnd: 15,
+            bit0: nil, bit1: nil, bit2: nil,
+            continuous: false, scale: 1, unit: "",
+            minValue: 0, maxValue: 4095,
+            minVersion: nil,
+            options: nil, mapping: nil,
+            onText: nil, offText: nil, reversed: false),
+    ];
+
+    /// 按分组归拢，保持声明顺序
+    static func grouped() -> [(ParamGroup, [ParamDef])] {
+        return groups.compactMap { g in
+            let items = all.filter { $0.group == g.id }
+            return items.isEmpty ? nil : (g, items)
+        }
+    }
+}
