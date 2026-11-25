@@ -23,13 +23,15 @@ targets:
     deploymentTarget: "16.0"
     sources:
       - path: EvDash
-    info:
-      path: EvDash/Info.plist
+    # NOTE: do NOT use XcodeGen's `info:` block here -- it regenerates
+    # Info.plist and silently drops our Bluetooth usage descriptions,
+    # which makes iOS kill the app on launch. Point at the checked-in file.
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.evdash.board
         PRODUCT_NAME: EvDash
         INFOPLIST_FILE: EvDash/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
         TARGETED_DEVICE_FAMILY: "1,2"
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"
