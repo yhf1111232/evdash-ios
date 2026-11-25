@@ -1,12 +1,8 @@
 name: Build unsigned IPA
 
-# 在 GitHub 免费的 macOS 机器上编译出未签名 .ipa。
-# 拿到 .ipa 后用爱思助手 / Sideloadly 在 Windows 上用自己的 Apple ID 签名安装。
-#
-# 用法：
-#   1. 把这个仓库推到 GitHub（public 仓库 Actions 免费）
-#   2. Actions 页面点 "Build unsigned IPA" → Run workflow
-#   3. 跑完后在 Artifacts 里下载 EvDash-unsigned.ipa
+# 鍦?GitHub 鍏嶈垂鐨?macOS 鏈哄櫒涓婄紪璇戝嚭鏈鍚?.ipa銆?# 鎷垮埌 .ipa 鍚庣敤鐖辨€濆姪鎵?/ Sideloadly 鍦?Windows 涓婄敤鑷繁鐨?Apple ID 绛惧悕瀹夎銆?#
+# 鐢ㄦ硶锛?#   1. 鎶婅繖涓粨搴撴帹鍒?GitHub锛坧ublic 浠撳簱 Actions 鍏嶈垂锛?#   2. Actions 椤甸潰鐐?"Build unsigned IPA" 鈫?Run workflow
+#   3. 璺戝畬鍚庡湪 Artifacts 閲屼笅杞?EvDash-unsigned.ipa
 
 on:
   workflow_dispatch:
@@ -15,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-13
     timeout-minutes: 30
 
     steps:
