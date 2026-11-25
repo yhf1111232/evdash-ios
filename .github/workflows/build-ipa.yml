@@ -1,8 +1,12 @@
 name: Build unsigned IPA
 
-# 鍦?GitHub 鍏嶈垂鐨?macOS 鏈哄櫒涓婄紪璇戝嚭鏈鍚?.ipa銆?# 鎷垮埌 .ipa 鍚庣敤鐖辨€濆姪鎵?/ Sideloadly 鍦?Windows 涓婄敤鑷繁鐨?Apple ID 绛惧悕瀹夎銆?#
-# 鐢ㄦ硶锛?#   1. 鎶婅繖涓粨搴撴帹鍒?GitHub锛坧ublic 浠撳簱 Actions 鍏嶈垂锛?#   2. Actions 椤甸潰鐐?"Build unsigned IPA" 鈫?Run workflow
-#   3. 璺戝畬鍚庡湪 Artifacts 閲屼笅杞?EvDash-unsigned.ipa
+# Build an unsigned .ipa on a GitHub-hosted macOS runner.
+# After downloading, sign it on Windows with i4Tools / Sideloadly using your Apple ID.
+#
+# Notes:
+#   - macos-13 is the oldest still-supported Intel runner; usually shortest queue.
+#   - If it stays queued, change runs-on to macos-14 / macos-15 and retry.
+#   - Build is unsigned (CODE_SIGNING_ALLOWED=NO); signing happens on Windows.
 
 on:
   workflow_dispatch:
@@ -12,7 +16,7 @@ on:
 jobs:
   build:
     runs-on: macos-13
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -22,9 +26,12 @@ jobs:
         run: |
           xcodebuild -version
           swift --version
+          sw_vers
 
       - name: Install XcodeGen
-        run: brew install xcodegen
+        run: |
+          brew install xcodegen
+          xcodegen --version
 
       - name: Generate Xcode project
         run: xcodegen generate
@@ -32,7 +39,7 @@ jobs:
       - name: Run protocol tests
         run: |
           set -o pipefail
-          swift test --parallel
+          swift test 2>&1 | tail -40
 
       - name: Build app (no code signing)
         run: |
@@ -47,7 +54,7 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             ENABLE_BITCODE=NO \
-            build
+            build 2>&1 | tail -60
 
       - name: Package into unsigned IPA
         run: |
@@ -64,7 +71,6 @@ jobs:
           cp -R "$APP_PATH" Payload/
           zip -qry EvDash-unsigned.ipa Payload
           ls -lh EvDash-unsigned.ipa
-          unzip -l EvDash-unsigned.ipa | head -20
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
