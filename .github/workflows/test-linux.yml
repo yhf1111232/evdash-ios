@@ -1,0 +1,26 @@
+name: Protocol tests (Linux)
+
+# 在 Ubuntu 上跑纯逻辑测试 —— 不需要 Apple 工具链，几分钟就能出结果。
+# 用来快速验证 FrameDecoder / ParamCodec / Params 的正确性。
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Swift version
+        run: swift --version
+
+      - name: Run protocol tests
+        run: |
+          set -o pipefail
+          swift test --parallel 2>&1 | tail -60
