@@ -4,8 +4,8 @@ name: Build unsigned IPA
 # After downloading, sign it on Windows with i4Tools / Sideloadly using your Apple ID.
 #
 # Notes:
-#   - macos-13 is the oldest still-supported Intel runner; usually shortest queue.
-#   - If it stays queued, change runs-on to macos-14 / macos-15 and retry.
+#   - macos-15 (arm64) - macos-13 retired 2025-12-04, macos-14 deprecated 2026-07-06.
+#   - Fallbacks: macos-14 / macos-26.
 #   - Build is unsigned (CODE_SIGNING_ALLOWED=NO); signing happens on Windows.
 
 on:
@@ -15,7 +15,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: macos-15
     timeout-minutes: 45
 
     steps:
